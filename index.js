@@ -6,6 +6,7 @@ const ytdl = require('@distube/ytdl-core');
 const yts = require('yt-search');
 const SpotifyWebApi = require('spotify-web-api-node');
 const stringSimilarity = require('string-similarity');
+const config = require("./config.json");
 
 let OpusEncoder;
 try {
@@ -27,8 +28,8 @@ function cleanSongTitle(title) {
 }
 // Spotify API setup
 const spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    clientId: config.SPOTIFY_CLIENT_ID,
+    clientSecret: config.SPOTIFY_CLIENT_SECRET,
 });
 
 // Get Spotify access token
@@ -183,5 +184,5 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-client.login(process.env.KEY); // Use the token from environment variables
+client.login(config.SPOTIFY_CLIENT_SECRET); // Use the token from environment variables
 
