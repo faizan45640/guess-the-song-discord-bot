@@ -24,7 +24,7 @@ try {
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] });
 function cleanSongTitle(title) {
     // Regular expression to remove content within parentheses, square brackets, and "feat." clauses
-    return title.replace(/\s*\(.*?\)|\s*\[.*?\]|\s*feat\..*/gi, '').trim();
+    return title.replace(/\s*\(.*?\)|\s*.∗?.*?|\s*feat\..*/gi, '').trim();
 }
 // Spotify API setup
 const spotifyApi = new SpotifyWebApi({
@@ -148,7 +148,7 @@ client.on('messageCreate', async (message) => {
                 const filter = response => {
                     const cleanedTitle = cleanSongTitle(track.name.toLowerCase());
                      const similarity = stringSimilarity.compareTwoStrings(response.content.toLowerCase(), cleanedTitle);
-                     return similarity > 0.7; // Adjust the threshold as needed
+                     return similarity > 0.7; 
                  };
                 try {
                     const collected = await message.channel.awaitMessages({ filter, max: 1, time: 50000, errors: ['time'] });
@@ -184,5 +184,5 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-client.login(config.SPOTIFY_CLIENT_SECRET); // Use the token from environment variables
+client.login(config.KEY);//DISCORD API KEY
 
