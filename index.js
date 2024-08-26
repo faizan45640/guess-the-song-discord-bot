@@ -8,6 +8,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const stringSimilarity = require('string-similarity');
 const config = require("./config.json");
 const fs = require("fs");
+const { connect } = require('http2');
 const agent = ytdl.createAgent(JSON.parse(fs.readFileSync("cookies.json")));
 
 let OpusEncoder;
@@ -138,10 +139,12 @@ client.on('messageCreate', async (message) => {
                 const startTime = Math.max(0, Math.floor(Math.random() * (videoLengthSeconds - 30)));
 
                 const resource = createAudioResource(await ytdl(songInfo.url, {
+                    agent,
+                    
                     begin: `${startTime}s`,
                     filter: 'audioonly',
                     quality: 'highestaudio',
-                    agent
+                   
 
                 } ));
                 
@@ -192,6 +195,7 @@ client.on('messageCreate', async (message) => {
     }
 
     // Check points command
+    
     if (message.content.startsWith('!points')) {
         const userPoints = points[message.author.id] || 0;
         message.reply(`You have ${userPoints} point(s).`);
