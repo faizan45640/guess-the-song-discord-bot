@@ -7,6 +7,8 @@ const yts = require('yt-search');
 const SpotifyWebApi = require('spotify-web-api-node');
 const stringSimilarity = require('string-similarity');
 const config = require("./config.json");
+const fs = require("fs");
+const agent = ytdl.createAgent(JSON.parse(fs.readFileSync("cookies.json")));
 
 let OpusEncoder;
 try {
@@ -95,7 +97,7 @@ client.on('messageCreate', async (message) => {
             return message.reply('Invalid Spotify playlist link.');
         }
         const playlistId = playlistIdMatch[1];
-      //  const playlistId = '3LgcZPSgVs9dJgEvyZVVdg'; // Replace with your Spotify playlist ID
+     
 
         // Fetch playlist tracks
         const playlist = await spotifyApi.getPlaylistTracks(playlistId);
@@ -111,12 +113,19 @@ client.on('messageCreate', async (message) => {
             let totalSongs=numOfSongs;
 
             for (let i = 0; i < totalSongs; i++) {
-                let random = Math.floor(Math.random() * 50) + 1;
+                let random = Math.floor(Math.random() * playlist.body.total);
                 const trackNumber = random;
                 const track = playlist.body.items[trackNumber].track;
+                if(!track){
+                continue;
+
+            }                
+
+                
+         
 
                 // Search for the song on YouTube
-                const searchResult = await yts(`${track.name} ${track.artists[0].name}`);
+                const searchResult = await yts(`${track.name} ${track.artists[0].name}` );
                 const songInfo = searchResult.videos[0];
                 console.log(songInfo);
 
@@ -132,7 +141,8 @@ client.on('messageCreate', async (message) => {
                     begin: `${startTime}s`,
                     filter: 'audioonly',
                     quality: 'highestaudio',
-                }));
+
+                } , { agent }));
                 
                 const player = createAudioPlayer();
                 player.play(resource);
@@ -148,7 +158,7 @@ client.on('messageCreate', async (message) => {
                 const filter = response => {
                     const cleanedTitle = cleanSongTitle(track.name.toLowerCase());
                      const similarity = stringSimilarity.compareTwoStrings(response.content.toLowerCase(), cleanedTitle);
-                     return similarity > 0.7; // Adjust the threshold as needed
+                     return similarity > 0.7;
                  };
                 try {
                     const collected = await message.channel.awaitMessages({ filter, max: 1, time: 50000, errors: ['time'] });
@@ -184,5 +194,5 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-client.login(config.SPOTIFY_CLIENT_SECRET); // Use the token from environment variables
+client.login(config.KEY); // Use the token from environment variables
 
