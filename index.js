@@ -141,8 +141,9 @@ client.on('messageCreate', async (message) => {
                     begin: `${startTime}s`,
                     filter: 'audioonly',
                     quality: 'highestaudio',
+                    agent
 
-                } , { agent }));
+                } ));
                 
                 const player = createAudioPlayer();
                 player.play(resource);
